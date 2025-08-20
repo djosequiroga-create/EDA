@@ -1,184 +1,140 @@
-# EDA
-# EDA — Notas de Estudiantes (Matemáticas y Portugués)
 
-**Curso:** (completar)  
-**Autores:** (completar)  
-**Fecha:** (completar)
 
-Este trabajo presenta un **análisis exploratorio de datos (EDA)** con **variable respuesta numérica**. Tomamos como guía el ejemplo de Walmart (ventas semanales) y lo adaptamos al contexto académico: aquí la respuesta es la **nota final `G3` (0–20)**. Los datos provienen de dos archivos: `student-mat.csv` (Matemáticas) y `student-por.csv` (Portugués).
+# 📊 Análisis Exploratorio de Datos — Estudiantes (Math & Portuguese)
+
+Este repositorio contiene el análisis exploratorio de datos (EDA) aplicado a dos conjuntos de datos sobre rendimiento académico de estudiantes en Portugal. Los datasets provienen del UCI Machine Learning Repository y corresponden a estudiantes de **Matemáticas** y **Portugués**.
 
 ---
 
-## 3.4 Análisis exploratorio con variable respuesta numérica
+## 📂 Estructura de carpetas
 
-Para el desarrollo de las visualizaciones y resúmenes seguimos el mismo flujo del ejemplo (ETL → variable objetivo → variables independientes → bivariado). En lugar de `weekly_sales`, nuestra variable objetivo es **`G3`** y usaremos características demográficas, hábitos de estudio, contexto familiar y antecedentes académicos como explicativas.
-
----
-
-## 3.4.1 Contexto de los datos (estudiantes)
-
-**Archivos de origen**
-- `student-mat.csv` → estudiantes de **Matemáticas**
-- `student-por.csv` → estudiantes de **Portugués**
-
-Tras unificar ambas bases y estandarizar nombres, trabajamos con **1.044** observaciones y **34** variables. Algunas variables relevantes:
-
-- **Demográficas:** `sex` (F/M), `age`, `address` (U/R), `famsize` (LE3/GT3).  
-- **Familia y tutoría:** `Pstatus` (T/A), `Medu`, `Fedu`, `Mjob`, `Fjob`, `guardian`.  
-- **Escolares:** `studytime` (1–4), `failures`, `absences`, `traveltime` (1–4).  
-- **Apoyos y recursos:** `schoolsup`, `famsup`, `paid`, `activities`, `higher`, `internet`, `romantic`.  
-- **Escalas (1–5):** `famrel`, `freetime`, `goout`, `Dalc`, `Walc`, `health`.  
-- **Notas:** `G1`, `G2`, **`G3`** (0–20).
-
-**Objetivo**  
-Comprender patrones y relaciones alrededor de **`G3`** y dejar artefactos listos para modelado posterior.
+```
+├── data/        # Archivos CSV originales (student-mat.csv, student-por.csv)
+├── images/      # Gráficos generados en el análisis
+├── tables/      # Tablas exportadas en formato CSV
+└── script.R     # Script único con todo el análisis
+```
 
 ---
 
-## 3.4.2 Extracción, transformación y carga (ETL)
+## 🔹 3.4.2 Extracción, Transformación y Carga (ETL)
 
-- Se cargaron ambos CSV desde `data/`, se limpiaron nombres y se unificaron en un solo conjunto, agregando la etiqueta `subject` (Math/Portuguese).
-- Se eliminaron algunas columnas no utilizadas en el análisis inicial (p. ej., `school`, `address`).
+Se unieron los datasets `student-mat.csv` y `student-por.csv` en un único dataframe.  
+Se estandarizaron los nombres de las columnas y se eliminaron variables irrelevantes (`school`, `address`).
 
-**Calidad de datos**
-- **Conteo de NAs por variable:** `tables/na_table.csv`  
-- **Mapa de valores perdidos:** `images/missmap.png`  
+- **Mapa de valores perdidos**  
+  ![Mapa de valores perdidos](images/missmap.png)
 
-**Lectura:** No se observaron valores faltantes en las variables clave, por lo que el conjunto es **apto para análisis**.
-
----
-
-## 3.4.3 Análisis de la variable objetivo: `G3`
-
-**Resumen (`n = 1.044`)**  
-- **Media:** **11.34** (DS = **3.86**)  
-- **Mediana:** **11.00**  
-- **Mínimo–Máximo:** **0.00** – **20.00**  
-- **Q1–Q3:** **10.00** – **14.00** (IQR = **4.00**)
-
-**Interpretación (en el estilo del ejemplo)**  
-La variable `G3` fue analizada a partir de **1.044** observaciones. Se obtuvo un **promedio** de **11.34** puntos (DS = **3.86**), donde el **50%** de las notas se encuentra **por debajo de 11.00**. El **mínimo** observado fue **0.00**, lo que indica casos de pérdida total, y el **máximo** alcanzó **20.00**, es decir, calificación perfecta. El rango intercuartílico (IQR = **4.00**) refleja una **dispersión moderada** entre el primer y tercer cuartil. La distribución muestra **asimetría hacia la izquierda** (concentración en valores medios y cola hacia los bajos), consistente con la presencia de **outliers** en **0** y **20**.
-
-**Artefactos**  
-- Resumen numérico: `tables/resumen_g3.csv`  
-- Histograma + densidad: `images/hist_g3.png`  
-- Boxplot: `images/boxplot_g3.png`
+- **Tabla de NAs por columna**: [`na_table.csv`](tables/na_table.csv)
 
 ---
 
-## 3.4.4 Análisis de las variables características (independientes)
+## 🔹 3.4.3 Análisis de la variable respuesta: G3
 
-### 3.4.4.1 Variables numéricas
+La variable **G3** representa la **nota final (0–20)**.  
+A continuación, se muestran su distribución y estadísticas descriptivas.
 
-Se analizaron **`age`**, **`absences`** y **`studytime`**:
+- **Resumen estadístico**: [`resumen_g3.csv`](tables/resumen_g3.csv)
 
-- **Edad (`age`)**  
-  n = 1.044; **media = 16.73**, DS = **1.24**; mediana = **17.00**; min–max = **15.00–22.00**; Q1–Q3 = **16.00–18.00** (IQR = **2.00**).  
-  Conjunto **homogéneo** en edad escolar: la mayoría se concentra entre 16 y 18 años.
+- **Histograma con densidad**  
+  ![Histograma G3](images/hist_g3.png)
 
-- **Ausencias (`absences`)**  
-  n = 1.044; **media = 4.43**, DS = **6.21**; mediana = **2.00**; min–max = **0.00–75.00**; Q1–Q3 = **0.00–6.00** (IQR = **6.00**).  
-  Predominan **pocas ausencias**, pero existen **casos extremos** (p99 ≈ **25.57**), lo que genera **alta asimetría**.
+- **Boxplot de G3**  
+  ![Boxplot G3](images/boxplot_g3.png)
 
-- **Tiempo de estudio (`studytime`, 1–4)**  
-  n = 1.044; **media = 1.97**, DS = **0.83**; mediana = **2.00**; min–max = **1.00–4.00**; Q1–Q3 = **1.00–2.00** (IQR = **1.00**).  
-  Distribución **concentrada** en niveles bajos/medios: 1 (**317**), 2 (**503**), 3 (**162**), 4 (**62**).
-
-**Artefactos**  
-- Resumen numérico: `tables/resumen_variables_numericas.csv`  
-- Boxplots combinados: `images/boxplots_variables_numericas.png`
+📌 **Interpretación:**  
+La mayoría de los estudiantes obtiene notas entre 8 y 14, con ligera asimetría a la izquierda. Existen valores atípicos en ambos extremos.
 
 ---
 
-### 3.4.4.2 Variables categóricas
+## 🔹 3.4.4 Análisis de variables independientes
 
-A modo de ejemplo, se presentan **`sex`**, **`schoolsup`** y **`activities`**.
+### 📈 Variables numéricas
+Se analizaron **edad**, **ausencias** y **tiempo de estudio**.
 
-- **Sexo (`sex`)**  
-  F = **56.61%** (n=591); M = **43.39%** (n=453).  
-- **Apoyo escolar (`schoolsup`)**  
-  **no = 88.60%** (n=925); **yes = 11.40%** (n=119).  
-- **Actividades (`activities`)**  
-  **no = 50.57%** (n=528); **yes = 49.43%** (n=516).
+- **Resumen estadístico**: [`resumen_variables_numericas.csv`](tables/resumen_variables_numericas.csv)
 
-**Artefactos**  
-- Tabla de frecuencias: `tables/frecuencias_categoricas.csv`  
-- Gráfico de ejemplo (`sex`): `images/frecuencia_sex.png`
+- **Boxplots comparativos**  
+  ![Boxplots variables numéricas](images/boxplots_variables_numericas.png)
 
-**Lectura (al estilo del ejemplo)**  
-`schoolsup` muestra **baja cobertura** del apoyo, lo que sugiere focalización en casos específicos. `activities` está **casi equilibrada**, permitiendo comparaciones razonables entre grupos. `sex` es **ligeramente desbalanceada** a favor de F.
+📌 **Interpretación:**  
+- La edad se concentra entre 15 y 18 años.  
+- Las ausencias presentan una distribución muy sesgada, con pocos estudiantes que acumulan muchas faltas.  
+- El tiempo de estudio está concentrado en las categorías más bajas (1 y 2).
 
 ---
 
-## 3.4.5 Análisis exploratorio bivariado
+### 🧾 Variables categóricas
+Se analizaron **sexo (sex)**, **apoyo escolar adicional (schoolsup)** y **actividades extraescolares (activities)**.
 
-### 3.4.5.1 Comparación de `G3` con variables numéricas
+- **Frecuencias**: [`frecuencias_categoricas.csv`](tables/frecuencias_categoricas.csv)
 
-- **Dispersión `G3` vs `age`**  
-  Los puntos se distribuyen entre 15 y 22 años sin una tendencia pronunciada. La correlación es **débil y negativa** (**r = -0.125**): la **edad explica poco** la variación en `G3`.
+- **Ejemplo: distribución por sexo**  
+  ![Frecuencia sexo](images/frecuencia_sex.png)
 
-- **Dispersión `G3` vs `absences`**  
-  Se observa **alta dispersión** (ausencias de 0 a 75) y una tendencia **ligeramente negativa** (**r = -0.046**): a mayor número de ausencias, **menor `G3`** en promedio, aunque el efecto es **pequeño**.
-
-- **Dispersión `G3` vs `studytime`**  
-  Se aprecia una **relación débil y positiva** (**r = 0.162**): más tiempo de estudio suele asociarse con **mejor `G3`**, con **solapamientos** entre niveles.
-
-> Nota: Los **scatterplots con recta LM** se visualizan en ejecución; no se guardan por defecto en disco.
-
-### 3.4.5.2 Comparación de `G3` con variables categóricas
-
-Se calcularon estadísticas por nivel (n, media, DS, mediana, min, max, Q1, Q3, IQR):
-
-- **`sex`**  
-  F: **media = 11.45**, mediana = **12.00**, IQR = **4.00** (n=591)  
-  M: **media = 11.20**, mediana = **11.00**, IQR = **4.00** (n=453)  
-  → **Medianas muy similares**; no se evidencia una brecha marcada por género.
-
-- **`schoolsup`**  
-  no: **media = 11.45**, mediana = **12.00**, IQR = **4.00** (n=925)  
-  yes: **media = 10.49**, mediana = **11.00**, IQR = **3.00** (n=119)  
-  → El grupo “yes” muestra **media menor**, coherente con **asignación del apoyo a estudiantes con mayor rezago** (no implica efecto causal del apoyo).
-
-- **`activities`**  
-  no: **media = 11.21**, mediana = **11.00**, IQR = **4.00** (n=528)  
-  yes: **media = 11.47**, mediana = **12.00**, IQR = **4.00** (n=516)  
-  → Participar en actividades se asocia con **ligera mejora** promedio, con **solapamientos** importantes.
-
-**Artefacto**  
-- Tabla consolidada: `tables/analisis_bivariado.csv`  
-
-> Nota: Los **boxplots** de esta sección se muestran en pantalla; no se guardan por defecto.
-
-### 3.4.5.3 Vistazo multivariado (GGally)
-
-Una inspección con `ggpairs()` confirma patrones:  
-- **`G2` vs `G3`** presenta una **correlación fuerte y positiva** (**r = 0.911**), como era esperable (continuidad evaluativa).  
-- Señales **débiles** con `age`, `absences` y `studytime`, en las direcciones descritas arriba.
+📌 **Interpretación:**  
+La muestra está relativamente balanceada entre hombres y mujeres. La mayoría de estudiantes **no recibe apoyo escolar adicional**, aunque un número importante participa en actividades extracurriculares.
 
 ---
 
-## Conclusiones
+## 🔹 3.4.5 Análisis bivariado
 
-1. **`G3`** muestra **heterogeneidad** con concentración en valores medios (Mediana = **11.00**) y presencia de **outliers** (0 y 20).  
-2. **`G2`** es el **mejor predictor inmediato** de `G3` (**r = 0.911**).  
-3. Entre las numéricas simples, **`studytime`** se asocia **positivamente** y **`absences`** **negativamente** con `G3` (ambas con efectos **débiles**).  
-4. **`schoolsup`** (apoyo) exhibe **media inferior**, coherente con un **efecto de selección** (no causal). **`sex`** no muestra brechas relevantes; **`activities`** se asocia a **mejoras modestas**.  
-5. El dataset está **limpio (sin NAs)** y documentado con tablas y figuras para su posterior uso en modelado.
+### 🔗 G3 vs Variables Numéricas
+
+- **G3 vs Edad**  
+  ![G3 vs Edad](images/scatter_g3_age.png)
+
+- **G3 vs Ausencias**  
+  ![G3 vs Ausencias](images/scatter_g3_absences.png)
+
+- **G3 vs Tiempo de estudio**  
+  ![G3 vs Studytime](images/scatter_g3_studytime.png)
+
+📌 **Interpretación:**  
+- No existe relación fuerte entre la edad y la nota final.  
+- Más ausencias tienden a asociarse con peores calificaciones.  
+- Mayor tiempo de estudio muestra una ligera correlación positiva con mejores notas.
 
 ---
 
-## Archivos generados
+### 🔗 G3 vs Variables Categóricas
 
-**Tablas**  
-- `tables/na_table.csv`  
-- `tables/resumen_g3.csv`  
-- `tables/resumen_variables_numericas.csv`  
-- `tables/frecuencias_categoricas.csv`  
-- `tables/analisis_bivariado.csv`
+- **Distribución por sexo**  
+  ![Boxplot sexo](images/boxplot_g3_sex.png)
 
-**Imágenes**  
-- `images/missmap.png`  
-- `images/hist_g3.png`  
-- `images/boxplot_g3.png`  
-- `images/boxplots_variables_numericas.png`  
-- `images/frecuencia_sex.png`
+- **Distribución por apoyo escolar**  
+  ![Boxplot schoolsup](images/boxplot_g3_schoolsup.png)
+
+- **Distribución por actividades extracurriculares**  
+  ![Boxplot actividades](images/boxplot_g3_activities.png)
+
+- **Tabla de resumen**: [`analisis_bivariado.csv`](tables/analisis_bivariado.csv)
+
+📌 **Interpretación:**  
+- El sexo no muestra diferencias significativas en G3.  
+- Los estudiantes con apoyo escolar tienden a obtener resultados ligeramente superiores.  
+- La participación en actividades extracurriculares **no afecta drásticamente** el promedio final.
+
+---
+
+## 🔹 3.4.6 Análisis multivariado
+
+Se utilizó **GGally** para visualizar relaciones entre múltiples variables.
+
+- **Matriz de correlaciones**  
+  ![Matriz GGpairs](images/ggpairs.png)
+
+📌 **Interpretación:**  
+Las correlaciones entre G3 y las variables numéricas son débiles, pero se observa un patrón claro en el impacto de las **ausencias** y **tiempo de estudio**.
+
+---
+
+## ✅ Conclusiones generales
+
+1. La variable dependiente **G3** presenta una distribución normal sesgada con valores atípicos.  
+2. **Ausencias** es una de las variables con mayor relación negativa con el rendimiento.  
+3. El **tiempo de estudio** contribuye de manera positiva, aunque débil, a la mejora de las notas.  
+4. El apoyo escolar muestra efectos favorables en los resultados académicos.  
+5. No se evidencian grandes diferencias por sexo o actividades extracurriculares.
+
+
